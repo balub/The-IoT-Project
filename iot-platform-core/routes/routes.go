@@ -10,5 +10,5 @@ func SetUpRouter(r *gin.Engine) {
 	// protectedRoute := r.Group("/protected")
 
 	publicRoute.POST("/register", controllers.HandleRegistration)
-	publicRoute.GET("/login", controllers.HandleAuth)
+	publicRoute.POST("/login", controllers.HandleAuth)
 }
