@@ -9,11 +9,9 @@ func SetUpRouter(r *gin.Engine) {
 	publicRoute := r.Group("/auth")
 	protectedRoute := r.Group("/protected")
 
+	protectedRoute.POST("/project", controllers.CreateNewProject)
+	protectedRoute.GET("/project", controllers.FetchProjects)
 
-	protectedRoute.POST("/createproject", controllers.CreateNewProject)
-	protectedRoute.GET("/getprojects",controllers.FetchProjects)
-
-	
 	publicRoute.POST("/register", controllers.HandleRegistration)
 	publicRoute.POST("/login", controllers.HandleAuth)
 }

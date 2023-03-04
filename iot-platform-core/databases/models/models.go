@@ -4,38 +4,41 @@ import "gorm.io/gorm"
 
 type User struct {
 	gorm.Model
-	Email string `gorm:"unique" json:"email"`
+	Email    string `gorm:"unique" json:"email"`
 	Password string `gorm:"size:256" json:"password"`
 }
 
-type Projects struct{
+type Projects struct {
 	gorm.Model
-	Name string `gorm:"unique" json:"name"`
-	DbUrl string `json:"dbUrl"`
-	UserID int64 `json:"userID"`
-	User User `gorm:"foreignKey:UserID"`
+	Name          string `gorm:"unique" json:"name"`
+	DbUrl         string `json:"dbUrl"`
+	DbAuthKey     string `json:"dbAuthKey"`
+	BucketName    string `json:"bucketName"`
+	DbProjectName string `json:"dbProjectName"`
+	UserID        int64  `json:"userID"`
+	User          User   `gorm:"foreignKey:UserID"`
 }
 
-type Devices struct{
+type Devices struct {
 	gorm.Model
-	Name string `json:"name"`
-	AuthKey string `json:"authKey"`
-	ProjectID int64 `json:"projectID"`
-	Projects Projects `gorm:"foreignKey:ProjectID"`
+	Name      string   `json:"name"`
+	AuthKey   string   `json:"authKey"`
+	ProjectID int64    `json:"projectID"`
+	Projects  Projects `gorm:"foreignKey:ProjectID"`
 }
 
-type Models struct{
+type Models struct {
 	gorm.Model
-	Name	string `gorm:"uniqueIndex:idx_name_projectid" json:"name"`
-	ProjectID int64 `gorm:"uniqueIndex:idx_name_projectid" json:"projectId"`
-	Projects Projects `gorm:"foreignKey:ProjectID"`
+	Name      string   `gorm:"uniqueIndex:idx_name_projectid" json:"name"`
+	ProjectID int64    `gorm:"uniqueIndex:idx_name_projectid" json:"projectId"`
+	Projects  Projects `gorm:"foreignKey:ProjectID"`
 }
 
-type Fields struct{
+type Fields struct {
 	gorm.Model
-	Name string `gorm:"uniqueIndex:idx_name_fieldname" json:"name"`
-	Type string `json:"type"`
-	Required bool `json:"required"`
-	ModelId int64 `gorm:"uniqueIndex:idx_name_fieldname" json:"modelId"`
-	Models Models `gorm:"foreignKey:ModelId"`
+	Name     string `gorm:"uniqueIndex:idx_name_fieldname" json:"name"`
+	Type     string `json:"type"`
+	Required bool   `json:"required"`
+	ModelId  int64  `gorm:"uniqueIndex:idx_name_fieldname" json:"modelId"`
+	Models   Models `gorm:"foreignKey:ModelId"`
 }
