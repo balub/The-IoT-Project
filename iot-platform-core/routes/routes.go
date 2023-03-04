@@ -16,7 +16,7 @@ func SetUpRouter(r *gin.Engine) {
 	publicRoute.POST("/register", controllers.HandleRegistration)
 	publicRoute.POST("/login", controllers.HandleAuth)
 
-	protectedRoute.GET("/sse", client.SseHandler)
 	protectedRoute.POST("/project", controllers.CreateNewProject)
 	protectedRoute.GET("/project", controllers.FetchProjects)
+	protectedRoute.GET("/sse", client.SseHandler)
 }
