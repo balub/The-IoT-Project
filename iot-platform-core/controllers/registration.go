@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/lucsky/cuid"
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/balub/The-IoT-Project/databases"
@@ -20,7 +21,7 @@ func HandleRegistration(c *gin.Context) {
 	var input RegisterInput
 
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{" Input error": err.Error()})
 		return
 	}
 
@@ -32,16 +33,18 @@ func HandleRegistration(c *gin.Context) {
 	hashedPassword, errHash := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
 
 	if errHash != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": errHash.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{" Password error": errHash.Error()})
 		return
 	}
 
 	u.Password = string(hashedPassword)
 
+	u.ID = cuid.New()
+
 	errCase := databases.DB.Create(&u).Error
 
 	if errCase != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": errCase.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"Hash error": errCase.Error()})
 		return
 	}
 
