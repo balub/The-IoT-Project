@@ -6,6 +6,6 @@ import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
-var handleDisconnect mqtt.ConnectionLostHandler = func(client mqtt.Client, err error) {
+var HandleDisconnect mqtt.ConnectionLostHandler = func(client mqtt.Client, err error) {
 	fmt.Printf("Connect lost: %v", err)
 }
