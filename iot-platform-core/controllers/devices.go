@@ -21,6 +21,12 @@ type ProjectInfo struct {
 	ProjectID string `json:"projectID"`
 }
 
+type DeviceInfo struct {
+	ID      string `json:"id"`
+	Name    string `json:"name"`
+	AuthKey string `json:"authKey"`
+}
+
 func CreateNewDevice(c *gin.Context) {
 	// parseBody
 	var body DeviceInput
@@ -51,7 +57,7 @@ func CreateNewDevice(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, gin.H{"message": "device created"})
 }
 
-func FetchDevices(c *gin.Context) {
+func FetchDeviceList(c *gin.Context) {
 	var body ProjectInfo
 
 	if err := c.BindJSON(&body); err != nil {
@@ -60,8 +66,9 @@ func FetchDevices(c *gin.Context) {
 	}
 
 	// fetch user
-	var devices []models.Devices
-	databases.DB.First(&devices, fmt.Sprintf("ProjectID=%v", body.ProjectID))
+	var devices []DeviceInfo
+	// databases.DB.First(&devices, fmt.Sprintf("project_id='%v'", body.ProjectID))
+	databases.DB.Table("devices").Select("id, name, auth_key").Where(fmt.Sprintf("project_id='%v'", body.ProjectID)).Scan(&devices)
 
 	c.IndentedJSON(http.StatusOK, devices)
 
