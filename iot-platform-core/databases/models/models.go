@@ -23,9 +23,10 @@ type Projects struct {
 
 type Devices struct {
 	gorm.Model
-	Name      string   `json:"name"`
-	AuthKey   string   `json:"authKey"`
-	ProjectID int64    `json:"projectID"`
+	ID        string   `gorm:"primarykey;unique"`
+	Name      string   `gorm:"not null" json:"name"`
+	AuthKey   string   `gorm:"not null" json:"authKey"`
+	ProjectID string   `gorm:"not null" json:"projectID"`
 	Projects  Projects `gorm:"foreignKey:ProjectID"`
 }
 
