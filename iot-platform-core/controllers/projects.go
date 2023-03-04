@@ -25,20 +25,16 @@ func CreateNewProject(c *gin.Context) {
 	// check for userID
 	userID, exists := utils.ExtractTokenID(c)
 
-	fmt.Println("User ID: %s", userID)
-
 	if exists != nil {
 		c.JSON(http.StatusForbidden, gin.H{"message": "userId is required"})
 		return
 	}
 
-	// userID = fmt.Sprintf(userID)
-	output := strings.ReplaceAll(userID, "\"", "'")
+	userID = strings.ReplaceAll(userID, "\"", "'")
 
 	// fetch user
 	var user models.User
-	// databases.DB.First(&user, fmt.Sprintf("id='%v'", userID))
-	databases.DB.First(&user, fmt.Sprintf("id=%v", output))
+	databases.DB.First(&user, fmt.Sprintf("id=%v", userID))
 
 	// parseBody
 	var body ProjectInput
@@ -61,17 +57,18 @@ func CreateNewProject(c *gin.Context) {
 }
 
 func FetchProjects(c *gin.Context) {
-	userID, exists := c.Get("userId")
-	fmt.Println(userID)
+	userID, exists := utils.ExtractTokenID(c)
 
-	if !exists {
+	if exists != nil {
 		c.JSON(http.StatusForbidden, gin.H{"message": "userId is required"})
 		return
 	}
 
+	userID = strings.ReplaceAll(userID, "\"", "'")
+
 	// fetch user
 	var user models.User
-	databases.DB.First(&user, userID)
+	databases.DB.First(&user, fmt.Sprintf("id=%v", userID))
 
 	var projects []models.Projects
 	databases.DB.Where("user_id = ?", user.ID).Find(&projects)
