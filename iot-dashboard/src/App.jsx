@@ -2,14 +2,14 @@ import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import HomePage from "./components/HomePage";
+import SigninPage from "./pages/SigninPage";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/signin" element={<SigninPage />} />
       </Routes>
     </BrowserRouter>
   );
