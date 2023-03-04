@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import NavBar from "../components/NavBar";
 import Popup from "reactjs-popup";
+import AddProject from "../components/AddProject";
 
 export default function HomePage() {
   const [projects, setProjects] = useState([
@@ -33,7 +34,9 @@ export default function HomePage() {
                 </button>
               }
               position=""
-            ></Popup>
+            >
+              <AddProject />
+            </Popup>
           </div>
         </header>
       </NavBar>
