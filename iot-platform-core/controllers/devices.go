@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lucsky/cuid"
@@ -18,16 +17,6 @@ type DeviceInput struct {
 }
 
 func CreateNewDevice(c *gin.Context) {
-	// check for userID
-	userID, exists := utils.ExtractTokenID(c)
-
-	if exists != nil {
-		c.JSON(http.StatusForbidden, gin.H{"message": "userId is required"})
-		return
-	}
-
-	userID = strings.ReplaceAll(userID, "\"", "'")
-
 	// parseBody
 	var body DeviceInput
 
@@ -35,15 +24,6 @@ func CreateNewDevice(c *gin.Context) {
 		c.JSON(http.StatusPartialContent, gin.H{"message": "Error parsing body"})
 		return
 	}
-
-	// fetch user
-	// var project models.Projects
-	// fetchErrorCase := databases.DB.First(&project, fmt.Sprintf("id=%v", body.ProjectID)).Error
-
-	// if fetchErrorCase != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Project Id Not Found"})
-	// 	return
-	// }
 
 	deviceId := cuid.New()
 
