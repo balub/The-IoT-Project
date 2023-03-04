@@ -4,38 +4,38 @@ import "gorm.io/gorm"
 
 type User struct {
 	gorm.Model
-	Email string `gorm:"unique"`
-	Password string `gorm:"size:256"`
+	Email string `gorm:"unique" json:"email"`
+	Password string `gorm:"size:256" json:"password"`
 }
 
 type Projects struct{
 	gorm.Model
-	Name string `gorm:"unique"`
-	DbUrl string
-	UserID int64
+	Name string `gorm:"unique" json:"name"`
+	DbUrl string `json:"dbUrl"`
+	UserID int64 `json:"userID"`
 	User User `gorm:"foreignKey:UserID"`
 }
 
 type Devices struct{
 	gorm.Model
-	Name string
-	AuthKey string
-	ProjectID int64
+	Name string `json:"name"`
+	AuthKey string `json:"authKey"`
+	ProjectID int64 `json:"projectID"`
 	Projects Projects `gorm:"foreignKey:ProjectID"`
 }
 
 type Models struct{
 	gorm.Model
-	Name	string `gorm:"uniqueIndex:idx_name_projectid"`
-	ProjectID int64 `gorm:"uniqueIndex:idx_name_projectid"`
+	Name	string `gorm:"uniqueIndex:idx_name_projectid" json:"name"`
+	ProjectID int64 `gorm:"uniqueIndex:idx_name_projectid" json:"projectId"`
 	Projects Projects `gorm:"foreignKey:ProjectID"`
 }
 
 type Fields struct{
 	gorm.Model
-	Name string `gorm:"uniqueIndex:idx_name_fieldname"`
-	Type string
-	Required bool
-	ModelId int64 `gorm:"uniqueIndex:idx_name_fieldname"`
+	Name string `gorm:"uniqueIndex:idx_name_fieldname" json:"name"`
+	Type string `json:"type"`
+	Required bool `json:"required"`
+	ModelId int64 `gorm:"uniqueIndex:idx_name_fieldname" json:"modelId"`
 	Models Models `gorm:"foreignKey:ModelId"`
 }
