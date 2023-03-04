@@ -29,7 +29,8 @@ func SetUpRouter(r *gin.Engine){
 
 
 	protectedRoute.Use(AuthMiddleware())
-	protectedRoute.POST("/createProject", controllers.CreateNewProject)
+	protectedRoute.POST("/createproject", controllers.CreateNewProject)
+	protectedRoute.GET("/getprojects",controllers.FetchProjects)
 
 	
 }
