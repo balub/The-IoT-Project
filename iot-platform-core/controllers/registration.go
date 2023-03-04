@@ -33,6 +33,7 @@ func HandleRegistration(c *gin.Context) {
 
 	if errHash != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": errHash.Error()})
+		return
 	}
 
 	u.Password = string(hashedPassword)

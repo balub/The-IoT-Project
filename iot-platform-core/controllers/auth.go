@@ -35,18 +35,21 @@ func HandleAuth(c *gin.Context) {
 
 	if dbErr != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": dbErr.Error()})
+		return
 	}
 
 	passCheckErr := VerifyPassword(user.Password, u.Password)
 
 	if passCheckErr != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": passCheckErr.Error()})
+		return
 	}
 
 	token, tokenErr := utils.GenerateToken(u.ID)
 
 	if tokenErr != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": tokenErr.Error()})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"token": token})
