@@ -3,12 +3,14 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lucsky/cuid"
 
 	"github.com/balub/The-IoT-Project/databases"
 	"github.com/balub/The-IoT-Project/databases/models"
+	"github.com/balub/The-IoT-Project/utils"
 )
 
 type ProjectInput struct {
@@ -21,16 +23,22 @@ type ProjectInput struct {
 
 func CreateNewProject(c *gin.Context) {
 	// check for userID
-	userID, exists := c.Get("userId")
+	userID, exists := utils.ExtractTokenID(c)
 
-	if !exists {
+	fmt.Println("User ID: %s", userID)
+
+	if exists != nil {
 		c.JSON(http.StatusForbidden, gin.H{"message": "userId is required"})
 		return
 	}
 
+	// userID = fmt.Sprintf(userID)
+	output := strings.ReplaceAll(userID, "\"", "'")
+
 	// fetch user
 	var user models.User
-	databases.DB.First(&user, userID)
+	// databases.DB.First(&user, fmt.Sprintf("id='%v'", userID))
+	databases.DB.First(&user, fmt.Sprintf("id=%v", output))
 
 	// parseBody
 	var body ProjectInput
@@ -41,7 +49,13 @@ func CreateNewProject(c *gin.Context) {
 	}
 
 	newProject := models.Projects{ID: cuid.New(), Name: body.Name, DbUrl: body.DbUrl, DbAuthKey: body.DbAuthKey, BucketName: body.BucketName, DbProjectName: body.DbProjectName, UserID: string(user.ID)}
-	databases.DB.Create(&newProject)
+
+	errCase := databases.DB.Create(&newProject).Error
+
+	if errCase != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": errCase.Error()})
+		return
+	}
 
 	c.JSON(200, gin.H{"message": "project created"})
 }
