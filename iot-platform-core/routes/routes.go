@@ -7,8 +7,13 @@ import (
 
 func SetUpRouter(r *gin.Engine) {
 	publicRoute := r.Group("/auth")
-	// protectedRoute := r.Group("/protected")
+	protectedRoute := r.Group("/protected")
 
+
+	protectedRoute.POST("/createproject", controllers.CreateNewProject)
+	protectedRoute.GET("/getprojects",controllers.FetchProjects)
+
+	
 	publicRoute.POST("/register", controllers.HandleRegistration)
 	publicRoute.POST("/login", controllers.HandleAuth)
 }
