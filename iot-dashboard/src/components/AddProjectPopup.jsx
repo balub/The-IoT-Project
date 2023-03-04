@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 
-function AddProject() {
+function AddProjectPopup() {
   const [count, setCount] = useState(1);
 
   return (
@@ -64,4 +64,4 @@ function AddProject() {
   );
 }
 
-export default AddProject;
+export default AddProjectPopup;

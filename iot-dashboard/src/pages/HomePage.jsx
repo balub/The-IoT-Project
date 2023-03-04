@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import NavBar from "../components/NavBar";
 import Popup from "reactjs-popup";
-import AddProject from "../components/AddProject";
+import AddProjectPopup from "../components/AddProjectPopup";
 
 export default function HomePage() {
   const [projects, setProjects] = useState([
@@ -35,14 +35,14 @@ export default function HomePage() {
               }
               position=""
             >
-              <AddProject />
+              <AddProjectPopup />
             </Popup>
           </div>
         </header>
       </NavBar>
       <div className="mt-6 justify-center flex flex-wrap">
         {projects.map((project) => (
-          <Link to="/projects/project">
+          <Link to="/project/$`projects.id`">
             <div
               className="bg-indigo-100 my-2 mx-2 w-48 rounded-2xl h-48 p-10"
               onClick={() => handleOnClick}
