@@ -43,9 +43,7 @@ func subscribeToTopic(client mqtt.Client) {
 	token.Wait()
 	fmt.Printf("Subscribed to topic %s", topic)
 
-	messageHandler := func(client mqtt.Client, msg mqtt.Message) {
-		fmt.Printf("Received message: %s\n", msg.Payload())
-	}
+	messageHandler := controllers.HandleMessage
 
 	client.AddRoute(topic, messageHandler)
 }
