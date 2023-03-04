@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -13,6 +14,10 @@ import (
 
 type DeviceInput struct {
 	Name      string `json:"name"`
+	ProjectID string `json:"projectID"`
+}
+
+type ProjectInfo struct {
 	ProjectID string `json:"projectID"`
 }
 
@@ -44,4 +49,20 @@ func CreateNewDevice(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusOK, gin.H{"message": "device created"})
+}
+
+func FetchDevices(c *gin.Context) {
+	var body ProjectInfo
+
+	if err := c.BindJSON(&body); err != nil {
+		c.JSON(http.StatusPartialContent, gin.H{"message": "Error parsing body"})
+		return
+	}
+
+	// fetch user
+	var devices []models.Devices
+	databases.DB.First(&devices, fmt.Sprintf("ProjectID=%v", body.ProjectID))
+
+	c.IndentedJSON(http.StatusOK, devices)
+
 }
