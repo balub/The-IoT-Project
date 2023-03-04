@@ -4,18 +4,20 @@ import "gorm.io/gorm"
 
 type User struct {
 	gorm.Model
+	ID       string `gorm:"primarykey;unique"`
 	Email    string `gorm:"unique" json:"email"`
 	Password string `gorm:"size:256" json:"password"`
 }
 
 type Projects struct {
 	gorm.Model
+	ID            string `gorm:"primarykey;unique"`
 	Name          string `gorm:"unique" json:"name"`
 	DbUrl         string `json:"dbUrl"`
 	DbAuthKey     string `json:"dbAuthKey"`
 	BucketName    string `json:"bucketName"`
 	DbProjectName string `json:"dbProjectName"`
-	UserID        int64  `json:"userID"`
+	UserID        string `json:"userID"`
 	User          User   `gorm:"foreignKey:UserID"`
 }
 

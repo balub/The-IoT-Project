@@ -4,14 +4,19 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gin-gonic/gin"
+	"github.com/lucsky/cuid"
+
 	"github.com/balub/The-IoT-Project/databases"
 	"github.com/balub/The-IoT-Project/databases/models"
-	"github.com/gin-gonic/gin"
 )
 
 type ProjectInput struct {
-	Name  string `json:"name"`
-	DbUrl string `json:"dbUrl"`
+	Name          string `json:"name"`
+	DbUrl         string `json:"dbUrl"`
+	DbAuthKey     string `json:"dbAuthKey"`
+	BucketName    string `json:"bucketName"`
+	DbProjectName string `json:"dbProjectName"`
 }
 
 func CreateNewProject(c *gin.Context) {
@@ -35,7 +40,7 @@ func CreateNewProject(c *gin.Context) {
 		return
 	}
 
-	newProject := models.Projects{Name: body.Name, DbUrl: body.DbUrl, UserID: int64(user.ID)}
+	newProject := models.Projects{ID: cuid.New(), Name: body.Name, DbUrl: body.DbUrl, DbAuthKey: body.DbAuthKey, BucketName: body.BucketName, DbProjectName: body.DbProjectName, UserID: string(user.ID)}
 	databases.DB.Create(&newProject)
 
 	c.JSON(200, gin.H{"message": "project created"})
