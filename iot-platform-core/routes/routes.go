@@ -5,15 +5,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetUpRouter(r *gin.Engine){
+func SetUpRouter(r *gin.Engine) {
 	publicRoute := r.Group("/auth")
 	protectedRoute := r.Group("/protected")
 
-	publicRoute.GET("/",controllers.HandleAuth)
-	protectedRoute.GET("/",controllers.HandleRegistration)
 
 	protectedRoute.POST("/createproject", controllers.CreateNewProject)
 	protectedRoute.GET("/getprojects",controllers.FetchProjects)
 
 	
+	publicRoute.POST("/register", controllers.HandleRegistration)
+	publicRoute.POST("/login", controllers.HandleAuth)
 }
