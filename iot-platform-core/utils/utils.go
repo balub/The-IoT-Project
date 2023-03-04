@@ -30,6 +30,26 @@ func GenerateToken(user_id string) (string, error) {
 
 }
 
+func GenerateProjectToken(project_id string, device_id string) (string, error) {
+
+	// token_lifespan, err := strconv.Atoi(os.Getenv("TOKEN_HOUR_LIFESPAN"))
+	token_lifespan, err := strconv.Atoi("3000")
+
+	if err != nil {
+		return "", err
+	}
+
+	claims := jwt.MapClaims{}
+	claims["authorized"] = true
+	claims["project_id"] = project_id
+	claims["device_id"] = device_id
+	claims["exp"] = time.Now().Add(time.Hour * time.Duration(token_lifespan)).Unix()
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	return token.SignedString([]byte(os.Getenv("API_SECRET")))
+
+}
+
 func TokenValid(c *gin.Context) error {
 	tokenString := ExtractToken(c)
 	_, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
