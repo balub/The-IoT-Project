@@ -1,4 +1,4 @@
-package router
+package routers
 
 import (
 	"fmt"
@@ -38,7 +38,7 @@ func Subscribe() {
 
 // subscribe to a topic and listen to events
 func subscribeToTopic(client mqtt.Client) {
-	topic := ""
+	topic := "sonar"
 	token := client.Subscribe(topic, 1, nil)
 	token.Wait()
 	fmt.Printf("Subscribed to topic %s", topic)
