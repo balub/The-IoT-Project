@@ -45,7 +45,8 @@ var HandleMessage mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Messag
 		fmt.Println(err)
 	} else {
 		fmt.Println("All required fields present and have correct types")
-		fmt.Println(parsedPayload)
+		// fmt.Println(parsedPayload)
+		utils.PushToInflux(parsedPayload)
 	}
 
 }
