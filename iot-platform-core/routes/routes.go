@@ -13,7 +13,7 @@ func SetUpRouter(r *gin.Engine) {
 	protectedRoute := r.Group("/protected")
 	hardwareRoute := r.Group("/device")
 
-	protectedRoute.Use(middlewares.JwtAuthMiddleware())
+	// protectedRoute.Use(middlewares.JwtAuthMiddleware())
 
 	publicRoute.POST("/register", controllers.HandleRegistration)
 	publicRoute.POST("/login", controllers.HandleAuth)
@@ -25,6 +25,10 @@ func SetUpRouter(r *gin.Engine) {
 	protectedRoute.POST("/model", controllers.CreateModel)
 	protectedRoute.GET("/model", controllers.FetchModelInfo)
 	protectedRoute.POST("/model/edit", controllers.UpdateDataModel)
+
+	protectedRoute.GET("/FetchDataModel/:projectToken/:dataModel", client.FetchDataModel)
+	protectedRoute.GET("/FetchDataModel/:projectToken/:dataModel/:parameter", client.FetchDataModelParameter)
+
 	protectedRoute.GET("/sse", client.SseHandler)
 	protectedRoute.GET("/influx", client.FetchAll)
 	hardwareRoute.GET("/model", controllers.FetchSpecificModel)

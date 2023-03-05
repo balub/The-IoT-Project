@@ -13,10 +13,11 @@ import (
 	"github.com/balub/The-IoT-Project/databases/models"
 )
 
-func FetchDataModel(c *gin.Context) {
+func FetchDataModelParameter(c *gin.Context) {
 
 	projectToken := c.Param("projectToken")
 	dataModel := c.Param("dataModel")
+	parameter := c.Param("parameter")
 
 	var existingProject models.Projects
 	err := databases.DB.Find(&existingProject, fmt.Sprintf("id='%v'", projectToken)).Error
@@ -35,9 +36,7 @@ func FetchDataModel(c *gin.Context) {
 	}
 
 	fmt.Println(projectToken, dataModel)
-	// influxURL := "http://localhost:8086"
-	// influxToken := "IDkzBoF0Fmfgvu96O60rxU8SZy_Oz7wtABxlVlPWExQdAuHcALSrw4NMzSL3RVkxl3nh1NKwJQ92tC5vMghUQw=="
-	// influxBucket := "nodemcu"
+
 	influxOrg := "theproject"
 	influxURL := existingProject.DbUrl
 	influxToken := existingProject.DbAuthKey
@@ -55,7 +54,8 @@ func FetchDataModel(c *gin.Context) {
 	|> range(start: 0)
 	|> filter(fn: (r) => r["_measurement"] == "projectCore" and r["modelName"]=="%s" and r["dataModel"]=="%s")
 	|> last()
-	`, influxBucket, projectToken, existingModel.Name)
+	|> keep(columns:["%s"])
+	`, influxBucket, projectToken, existingModel.Name, parameter)
 
 	result, err := queryAPI.Query(context.Background(), query)
 	if err != nil {
