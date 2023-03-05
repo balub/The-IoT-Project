@@ -32,16 +32,17 @@ type Devices struct {
 
 type Models struct {
 	gorm.Model
+	ID        string   `gorm:"primarykey;unique"`
 	Name      string   `gorm:"uniqueIndex:idx_name_projectid" json:"name"`
-	ProjectID int64    `gorm:"uniqueIndex:idx_name_projectid" json:"projectId"`
+	ProjectID string   `gorm:"uniqueIndex:idx_name_projectid" json:"projectId"`
 	Projects  Projects `gorm:"foreignKey:ProjectID"`
 }
 
 type Fields struct {
 	gorm.Model
-	Name     string `gorm:"uniqueIndex:idx_name_fieldname" json:"name"`
+	Name     string `json:"name"`
 	Type     string `json:"type"`
 	Required bool   `json:"required"`
-	ModelId  int64  `gorm:"uniqueIndex:idx_name_fieldname" json:"modelId"`
-	Models   Models `gorm:"foreignKey:ModelId"`
+	ModelId  string `gorm:"not null" json:"modelId"`
+	Models   Models `gorm:"foreignKey:ModelID"`
 }
