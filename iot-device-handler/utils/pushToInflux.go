@@ -6,7 +6,7 @@ import (
 	influxdb2 "github.com/influxdata/influxdb-client-go"
 )
 
-func PushToInflux(fields map[string]interface{}) error {
+func PushToInflux(fields map[string]interface{}, tags map[string]string) error {
 
 	// Set InfluxDB connection options
 	options := influxdb2.DefaultOptions()
@@ -19,7 +19,7 @@ func PushToInflux(fields map[string]interface{}) error {
 	writeAPI := client.WriteAPI("theproject", "nodemcu")
 
 	// Create a new Point object with measurement "cpu" and tags "host" and "region"
-	point := influxdb2.NewPoint("projectCore", nil, fields, time.Now())
+	point := influxdb2.NewPoint("projectCore", tags, fields, time.Now())
 
 	// Write the data point to InfluxDB
 	writeAPI.WritePoint(point)
