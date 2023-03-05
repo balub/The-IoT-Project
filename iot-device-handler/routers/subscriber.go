@@ -13,7 +13,8 @@ import (
 func Subscribe() {
 	// mqtt client setup
 	opts := mqtt.NewClientOptions()
-	opts.AddBroker("mqtt://localhost:1883")
+	// opts.AddBroker("mqtt://localhost:1883")
+	opts.AddBroker("mqtt://test.mosquitto.org:1883")
 
 	opts.OnConnect = controllers.HandleConnect
 	opts.OnConnectionLost = controllers.HandleDisconnect

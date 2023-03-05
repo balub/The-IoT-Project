@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -11,15 +12,6 @@ import (
 )
 
 func FetchAll(c *gin.Context) {
-	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-	c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
-	c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
-	if c.Request.Method == "OPTIONS" {
-		c.AbortWithStatus(http.StatusOK)
-		return
-	}
-
 	c.Writer.Header().Set("Content-Type", "text/event-stream")
 	c.Writer.Header().Set("Cache-Control", "no-cache")
 	c.Writer.Header().Set("Connection", "keep-alive")
@@ -34,46 +26,56 @@ func FetchAll(c *gin.Context) {
 	client := influxdb2.NewClient(influxURL, influxToken)
 	queryAPI := client.QueryAPI(influxOrg)
 
+	closeNotify := c.Writer.(http.CloseNotifier).CloseNotify()
+	ticker := time.NewTicker(time.Second)
+	defer ticker.Stop()
+
 	go func() {
 		for {
-			// Build the InfluxDB query
-			startTime := time.Now().Add(-1 * time.Minute)
-			stopTime := time.Now()
 			query := fmt.Sprintf(`from(bucket:"%s")
-				|> range(start: %d, stop: %d)
-				|> filter(fn: (r) => r._measurement == "projectCore")
-				|> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
-				`,
-				influxBucket, startTime.UnixNano(), stopTime.UnixNano())
+			|> range(start: 0)
+			|> filter(fn: (r) => r["_measurement"] == "projectCore" and r["modelName"]=="sjr")
+			|> last()
+			`, influxBucket)
 
 			// Execute the query and process the results
 			result, err := queryAPI.Query(context.Background(), query)
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to execute query"})
+				// c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to execute query"})
+				fmt.Println("influx query issue")
 				return
 			}
 
 			// Parse the results and send them to the message channel
 			for result.Next() {
-				record := result.Record()
-				fmt.Println(record)
-				// messageChan <- record.ValueByKey("_value").(string)
+				// record := result.Record()
+				values := result.Record().Values()
+
+				resultJSON, err := json.Marshal(values)
+
+				if err != nil {
+					// c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed parsing json"})
+					fmt.Println("json parsing issue")
+					return
+				}
+
+				messageChan <- string(resultJSON)
 			}
 
 			// Sleep for one second before executing the query again
-			time.Sleep(time.Second)
+			time.Sleep(time.Second * 15)
 		}
 	}()
 
 	go func() {
 		for {
 			select {
-			case <-c.Writer.CloseNotify():
+			case <-closeNotify:
 				// The client has disconnected
 				fmt.Println("disconnected from server")
 				return
 			case message := <-messageChan:
-				fmt.Println(message)
+				fmt.Println(message, "sdgz")
 				c.Writer.WriteString("data: " + message + "\n\n")
 				c.Writer.Flush()
 			}

@@ -1,9 +1,8 @@
 package routes
 
 import (
-	"github.com/balub/The-IoT-Project/middlewares"
 	"github.com/balub/The-IoT-Project/controllers"
-	"github.com/balub/The-IoT-Project/controllers/client"
+	"github.com/balub/The-IoT-Project/middlewares"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,7 +23,7 @@ func SetUpRouter(r *gin.Engine) {
 	protectedRoute.POST("/model", controllers.CreateModel)
 	protectedRoute.GET("/model", controllers.FetchModelInfo)
 	protectedRoute.POST("/model/edit", controllers.UpdateDataModel)
-	protectedRoute.GET("/sse", client.SseHandler)
-	protectedRoute.GET("/influx", client.FetchAll)
+	// protectedRoute.GET("/sse", client.SseHandler)
+	// protectedRoute.GET("/influx", client.FetchAll)
 
 }
