@@ -1,6 +1,6 @@
 import React from "react";
 import DataModelInput from "./DataModelInput";
-import useDataModelStore from "./store/useDataModelStore";
+import useDataModelStore from "../store/useDataModelStore";
 
 function DataModel() {
   const models = useDataModelStore((state) => state.models);

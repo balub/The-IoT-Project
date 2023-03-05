@@ -42,10 +42,9 @@ export default function HomePage() {
       </NavBar>
       <div className="mt-6 justify-center flex flex-wrap">
         {projects.map((project) => (
-          <Link to="/project/$`projects.id`">
+          <Link to="/project/:projectId">
             <div
               className="bg-indigo-100 my-2 mx-2 w-48 rounded-2xl h-48 p-10"
-              onClick={() => handleOnClick}
             >
               <div className="font-bold text-xl">{project.name}</div>
               <div className="text-slate-500">{project.id}</div>
