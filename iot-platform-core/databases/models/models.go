@@ -43,6 +43,6 @@ type Fields struct {
 	Name     string `json:"name"`
 	Type     string `json:"type"`
 	Required bool   `json:"required"`
-	ModelId  string `gorm:"not null" json:"modelId"`
+	ModelID  string `gorm:"not null" json:"modelId"`
 	Models   Models `gorm:"foreignKey:ModelID"`
 }
