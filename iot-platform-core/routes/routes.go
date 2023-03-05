@@ -28,5 +28,7 @@ func SetUpRouter(r *gin.Engine) {
 	protectedRoute.GET("/sse", client.SseHandler)
 	protectedRoute.GET("/influx", client.FetchAll)
 	hardwareRoute.GET("/model", controllers.FetchSpecificModel)
+	// protectedRoute.GET("/sse", client.SseHandler)
+	// protectedRoute.GET("/influx", client.FetchAll)
 
 }
