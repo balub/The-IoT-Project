@@ -35,11 +35,6 @@ var HandleMessage mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Messag
 			Type:     "float64",
 			Required: true,
 		},
-		// utils.DefiniedModel{
-		// 	Name:     "humidity",
-		// 	Type:     "float",
-		// 	Required: true,
-		// },
 	}
 
 	fmt.Println("datapoint=", len(userDefinedModel))
