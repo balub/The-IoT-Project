@@ -42,5 +42,6 @@ func SetUpRouter(r *gin.Engine) {
 	protectedRoute.GET("/project", controllers.FetchProjects)
 	protectedRoute.POST("/device", controllers.CreateNewDevice)
 	protectedRoute.GET("/device", controllers.FetchDeviceList)
+	protectedRoute.POST("/model", controllers.CreateModel)
 	protectedRoute.GET("/sse", client.SseHandler)
 }

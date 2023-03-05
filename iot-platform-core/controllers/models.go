@@ -13,13 +13,17 @@ import (
 type Field struct {
 	Name     string `json:"name"`
 	Type     string `json:"type"`
-	Required string `json:"required"`
+	Required bool   `json:"required"`
 }
 
 type ModelReqBody struct {
 	ProjectID string  `json:"projectID"`
 	Name      string  `json:"name"`
 	Fields    []Field `json:"fields"`
+}
+
+type dbModelInfo struct {
+	ID string `json:"projectID"`
 }
 
 func CreateModel(c *gin.Context) {
@@ -40,6 +44,16 @@ func CreateModel(c *gin.Context) {
 	if errCase != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": errCase.Error()})
 		return
+	}
+
+	for _, field := range body.Fields {
+		newField := models.Fields{ModelId: string(modelId), Name: field.Name, Type: field.Type, Required: field.Required}
+		errCase := databases.DB.Create(&newField).Error
+
+		if errCase != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": errCase.Error()})
+			return
+		}
 	}
 
 	c.IndentedJSON(http.StatusOK, gin.H{"message": "model created"})
