@@ -3,7 +3,6 @@ package routes
 import (
 	"github.com/balub/The-IoT-Project/controllers"
 	"github.com/balub/The-IoT-Project/controllers/client"
-	"github.com/balub/The-IoT-Project/middlewares"
 	"github.com/gin-gonic/gin"
 )
 
@@ -33,7 +32,7 @@ func SetUpRouter(r *gin.Engine) {
 		c.Next()
 	})
 
-	protectedRoute.Use(middlewares.JwtAuthMiddleware())
+	// protectedRoute.Use(middlewares.JwtAuthMiddleware())
 
 	publicRoute.POST("/register", controllers.HandleRegistration)
 	publicRoute.POST("/login", controllers.HandleAuth)
@@ -42,5 +41,9 @@ func SetUpRouter(r *gin.Engine) {
 	protectedRoute.GET("/project", controllers.FetchProjects)
 	protectedRoute.POST("/device", controllers.CreateNewDevice)
 	protectedRoute.GET("/device", controllers.FetchDeviceList)
+
+	// client
 	protectedRoute.GET("/sse", client.SseHandler)
+	protectedRoute.GET("/influx", client.FetchAll)
+
 }

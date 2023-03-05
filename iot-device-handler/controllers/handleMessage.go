@@ -16,8 +16,8 @@ var HandleMessage mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Messag
 		return
 	}
 
-	_, projectOk := parsedPayload["projectToken"]
-	_, modelOk := parsedPayload["dataModel"]
+	projectToken, projectOk := parsedPayload["projectToken"]
+	modelName, modelOk := parsedPayload["dataModel"]
 
 	if !projectOk {
 		fmt.Println("Project id is required")
@@ -29,24 +29,36 @@ var HandleMessage mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Messag
 		return
 	}
 
-	userDefinedModel := map[string]map[string]interface{}{
-		"val": {
-			"type":     "float64",
-			"required": true,
+	userDefinedModel := []utils.DefiniedModel{
+		utils.DefiniedModel{
+			Name:     "temperature",
+			Type:     "float64",
+			Required: true,
 		},
-		"val2": {
-			"type":     "string",
-			"required": true,
-		},
+		// utils.DefiniedModel{
+		// 	Name:     "humidity",
+		// 	Type:     "float",
+		// 	Required: true,
+		// },
 	}
 
-	err := utils.ModelValidator(userDefinedModel, parsedPayload)
+	fmt.Println("datapoint=", len(userDefinedModel))
+	resData, err := utils.ModelValidator(userDefinedModel, parsedPayload)
+	tags := map[string]string{
+		"projectToken": projectToken.(string),
+		"modelName":    modelName.(string),
+	}
+	// err := utils.ModelValidator(userDefinedModel, parsedPayload)
+
 	if err != nil {
 		fmt.Println(err)
 	} else {
 		fmt.Println("All required fields present and have correct types")
 		// fmt.Println(parsedPayload)
-		utils.PushToInflux(parsedPayload)
+		utils.PushToInflux(resData, tags)
+		// for key, value := range userDefinedModel {
+		// 	fmt.Println(key, value)
+		// }
 	}
 
 }
