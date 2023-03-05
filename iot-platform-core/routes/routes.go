@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"github.com/balub/The-IoT-Project/middlewares"
 	"github.com/balub/The-IoT-Project/controllers"
 	"github.com/balub/The-IoT-Project/controllers/client"
 	"github.com/gin-gonic/gin"
@@ -11,29 +12,7 @@ func SetUpRouter(r *gin.Engine) {
 	publicRoute := r.Group("/auth")
 	protectedRoute := r.Group("/protected")
 
-	// publicRoute.Use(func(c *gin.Context) {
-	// 	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-	// 	c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
-	// 	c.Writer.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
-	// 	if c.Request.Method == "OPTIONS" {
-	// 		c.AbortWithStatus(204)
-	// 		return
-	// 	}
-	// 	c.Next()
-	// })
-
-	// protectedRoute.Use(func(c *gin.Context) {
-	// 	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-	// 	c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
-	// 	c.Writer.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
-	// 	if c.Request.Method == "OPTIONS" {
-	// 		c.AbortWithStatus(204)
-	// 		return
-	// 	}
-	// 	c.Next()
-	// })
-
-	// protectedRoute.Use(middlewares.JwtAuthMiddleware())
+	protectedRoute.Use(middlewares.JwtAuthMiddleware())
 
 	publicRoute.POST("/register", controllers.HandleRegistration)
 	publicRoute.POST("/login", controllers.HandleAuth)
@@ -44,6 +23,7 @@ func SetUpRouter(r *gin.Engine) {
 	protectedRoute.GET("/device", controllers.FetchDeviceList)
 	protectedRoute.POST("/model", controllers.CreateModel)
 	protectedRoute.GET("/model", controllers.FetchModelInfo)
+	protectedRoute.POST("/model/edit", controllers.UpdateDataModel)
 	protectedRoute.GET("/sse", client.SseHandler)
 	protectedRoute.GET("/influx", client.FetchAll)
 
