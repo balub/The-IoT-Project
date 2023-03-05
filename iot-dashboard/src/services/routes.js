@@ -25,9 +25,10 @@ const createProject = async (
   const token = localStorage.getItem("token");
   header.append("Authorization", `Bearer ${token}`);
 
-  return fetch("/project", {
+  return fetch("http://localhost:9090/protected/project", {
     method: "POST",
-    headers: header,
+    mode: "cors",
+    headers: { ...header, "Access-Control-Allow-Origin": "*" },
     body: JSON.stringify({ name, dbUrl, dbAuthKey, bucketName, dbProjectName }),
   });
 };

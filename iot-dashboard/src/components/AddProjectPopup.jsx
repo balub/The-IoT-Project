@@ -4,11 +4,11 @@ import { createProject } from "../services/routes";
 // import NewProjectCard from "../components/NewProjectCard";
 
 function AddProjectPopup({ cards }) {
-  const [name, setName] = useState("");
-  const [dbUrl, setDbUrl] = useState("");
-  const [dbAuthKey, setDbAuthKey] = useState("");
-  const [bucketName, setBucketName] = useState("");
-  const [dbProjectName, setDbProjectName] = useState("");
+  const [name, setName] = useState("h");
+  const [dbUrl, setDbUrl] = useState("k");
+  const [dbAuthKey, setDbAuthKey] = useState("hh");
+  const [bucketName, setBucketName] = useState("jj");
+  const [dbProjectName, setDbProjectName] = useState("jjj");
 
   async function handleOnClick(event) {
     event.preventDefault();
