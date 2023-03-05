@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -58,4 +59,24 @@ func CreateModel(c *gin.Context) {
 
 	c.IndentedJSON(http.StatusOK, gin.H{"message": "model created"})
 
+}
+
+func FetchModelInfo(c *gin.Context) {
+	var body ModelReqBody
+
+	if err := c.BindJSON(&body); err != nil {
+		c.JSON(http.StatusPartialContent, gin.H{"message": "Error parsing body"})
+		return
+	}
+
+	var dbModels []Field
+
+	var models []Field
+	databases.DB.Table("devices").Select("name, type, required").Where(fmt.Sprintf("project_id='%v'", body.ProjectID)).Scan(&models)
+
+	for _, model := range models {
+		dbModels = append(dbModels, Field{model.Name, model.Type, model.Required})
+	}
+
+	c.IndentedJSON(http.StatusOK, dbModels)
 }
