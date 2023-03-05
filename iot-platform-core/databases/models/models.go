@@ -40,9 +40,9 @@ type Models struct {
 
 type Fields struct {
 	gorm.Model
-	Name     string `gorm:"uniqueIndex:idx_name_fieldname" json:"name"`
+	Name     string `json:"name"`
 	Type     string `json:"type"`
 	Required bool   `json:"required"`
-	ModelId  string `gorm:"uniqueIndex:idx_name_fieldname" json:"modelId"`
-	Models   Models `gorm:"foreignKey:ModelId"`
+	ModelId  string `gorm:"not null" json:"modelId"`
+	Models   Models `gorm:"foreignKey:ModelID"`
 }
