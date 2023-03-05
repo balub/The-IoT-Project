@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/balub/The-IoT-Project/controllers"
+	"github.com/balub/The-IoT-Project/controllers/client"
 	"github.com/balub/The-IoT-Project/middlewares"
 	"github.com/gin-gonic/gin"
 )
@@ -10,6 +11,7 @@ func SetUpRouter(r *gin.Engine) {
 
 	publicRoute := r.Group("/auth")
 	protectedRoute := r.Group("/protected")
+	hardwareRoute := r.Group("/device")
 
 	protectedRoute.Use(middlewares.JwtAuthMiddleware())
 
@@ -23,6 +25,9 @@ func SetUpRouter(r *gin.Engine) {
 	protectedRoute.POST("/model", controllers.CreateModel)
 	protectedRoute.GET("/model", controllers.FetchModelInfo)
 	protectedRoute.POST("/model/edit", controllers.UpdateDataModel)
+	protectedRoute.GET("/sse", client.SseHandler)
+	protectedRoute.GET("/influx", client.FetchAll)
+	hardwareRoute.GET("/model", controllers.FetchSpecificModel)
 	// protectedRoute.GET("/sse", client.SseHandler)
 	// protectedRoute.GET("/influx", client.FetchAll)
 

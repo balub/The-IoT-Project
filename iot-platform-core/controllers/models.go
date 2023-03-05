@@ -9,6 +9,7 @@ import (
 
 	"github.com/balub/The-IoT-Project/databases"
 	"github.com/balub/The-IoT-Project/databases/models"
+	"github.com/balub/The-IoT-Project/utils"
 )
 
 type Field struct {
@@ -54,6 +55,11 @@ type UpdateDataModelBody struct {
 	Fields  []Field `json:"fields"`
 }
 
+type TestModel struct {
+	ID   string `json:"modelID"`
+	Name string `json:"name"`
+}
+
 func CreateModel(c *gin.Context) {
 	// parseBody
 	var body ModelReqBody
@@ -63,9 +69,9 @@ func CreateModel(c *gin.Context) {
 		return
 	}
 
-	modelId := cuid.New()
+	modelID := cuid.New()
 
-	newModel := models.Models{ID: string(modelId), Name: body.Name, ProjectID: string(body.ProjectID)}
+	newModel := models.Models{ID: string(modelID), Name: body.Name, ProjectID: string(body.ProjectID)}
 
 	errCase := databases.DB.Create(&newModel).Error
 
@@ -75,7 +81,7 @@ func CreateModel(c *gin.Context) {
 	}
 
 	for _, field := range body.Fields {
-		newField := models.Fields{ModelId: string(modelId), Name: field.Name, Type: field.Type, Required: field.Required}
+		newField := models.Fields{ModelID: string(modelID), Name: field.Name, Type: field.Type, Required: field.Required}
 		errCase := databases.DB.Create(&newField).Error
 
 		if errCase != nil {
@@ -139,7 +145,7 @@ func UpdateDataModel(c *gin.Context) {
 	}
 
 	for _, field := range body.Fields {
-		newField := models.Fields{ModelId: string(body.ModelID), Name: field.Name, Type: field.Type, Required: field.Required}
+		newField := models.Fields{ModelID: string(body.ModelID), Name: field.Name, Type: field.Type, Required: field.Required}
 		errCase := databases.DB.Create(&newField).Error
 
 		if errCase != nil {
@@ -149,4 +155,50 @@ func UpdateDataModel(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusOK, gin.H{"message": "model updated"})
+}
+
+func FetchSpecificModel(c *gin.Context) {
+	token := c.Query("token")
+	modelName := c.Query("modelName")
+
+	projectID, deviceID, exists := utils.ExtractProjectTokenID(token)
+
+	fmt.Println("Timing: ", deviceID)
+
+	if exists != nil {
+		c.JSON(http.StatusForbidden, gin.H{"message": "Unauthorised"})
+		return
+	}
+
+	var models FetchListModel
+	databases.DB.Table("models").Select("id, name").Where(fmt.Sprintf("project_id='%v' AND name='%v'", projectID, modelName)).Scan(&models)
+
+	// var arrLength = len(models)
+
+	fmt.Println("Project ID: ", projectID)
+	// fmt.Println("Count: ", arrLength)
+
+	if models.ID == "" {
+		c.JSON(http.StatusForbidden, gin.H{"message": "Data does not exist"})
+		return
+	}
+
+	var finalData TestModel
+
+	finalData.ID = models.ID
+	finalData.Name = models.Name
+
+	// for _, model := range models {
+
+	// 	var modelID = model.ID
+	// 	var fields []FetchListField
+	// 	databases.DB.Table("fields").Select("name, type, required").Where(fmt.Sprintf("model_id='%v'", modelID)).Scan(&fields)
+
+	// 	for _, field := range fields {
+	// 		finalData.Fields = append(finalData.Fields, FetchListField{field.Name, field.Type, field.Required})
+	// 	}
+	// }
+
+	c.IndentedJSON(http.StatusOK, finalData)
+
 }

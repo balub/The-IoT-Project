@@ -81,10 +81,12 @@ func ExtractTokenID(c *gin.Context) (string, error) {
 		}
 		return []byte(os.Getenv("API_SECRET")), nil
 	})
+
 	if err != nil {
 		return "Error", nil
 	}
 	claims, ok := token.Claims.(jwt.MapClaims)
+
 	if ok && token.Valid {
 		uid := strconv.Quote(fmt.Sprintf("%s", claims["user_id"]))
 		if err != nil {
@@ -93,4 +95,33 @@ func ExtractTokenID(c *gin.Context) (string, error) {
 		return string(uid), nil
 	}
 	return "Error", nil
+}
+
+func ExtractProjectTokenID(projectToken string) (string, string, error) {
+	tokenString := projectToken
+
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(os.Getenv("API_SECRET")), nil
+	})
+
+	if err != nil {
+		return "Error", "Error", nil
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+
+	if ok && token.Valid {
+		projectID := strconv.Quote(fmt.Sprintf("%s", claims["project_id"]))
+
+		deviceID := strconv.Quote(fmt.Sprintf("%s", claims["device_id"]))
+		if err != nil {
+			return "Error", "Error", err
+		}
+		return string(projectID), string(deviceID), nil
+	}
+	return "Error", "Error", nil
+
 }
