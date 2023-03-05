@@ -53,7 +53,7 @@ func CreateNewProject(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{"message": "project created"})
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "project created"})
 }
 
 func FetchProjects(c *gin.Context) {
