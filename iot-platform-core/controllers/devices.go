@@ -67,7 +67,6 @@ func FetchDeviceList(c *gin.Context) {
 
 	// fetch user
 	var devices []DeviceInfo
-	// databases.DB.First(&devices, fmt.Sprintf("project_id='%v'", body.ProjectID))
 	databases.DB.Table("devices").Select("id, name, auth_key").Where(fmt.Sprintf("project_id='%v'", body.ProjectID)).Scan(&devices)
 
 	c.IndentedJSON(http.StatusOK, devices)
