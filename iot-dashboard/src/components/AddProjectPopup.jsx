@@ -1,16 +1,31 @@
 import React from "react";
 import { useState } from "react";
 import { createProject } from "../services/routes";
+// import NewProjectCard from "../components/NewProjectCard";
 
-function AddProjectPopup() {
-  const [title, setTitle] = useState("");
+function AddProjectPopup({ cards }) {
+  const [name, setName] = useState("");
   const [dbUrl, setDbUrl] = useState("");
+  const [dbAuthKey, setDbAuthKey] = useState("");
+  const [bucketName, setBucketName] = useState("");
+  const [dbProjectName, setDbProjectName] = useState("");
 
-  function handleOnClick(event) {
+  async function handleOnClick(event) {
     event.preventDefault();
-    if (!!title && !!title) {
-      createProject(title, dbUrl);
+    if (!!name && !!dbUrl && !!dbAuthKey && !!bucketName && !!dbProjectName) {
+      try {
+        const result = await createProject(
+          name,
+          dbUrl,
+          dbAuthKey,
+          bucketName,
+          dbProjectName
+        );
+      } catch (err) {
+        console.log(err);
+      }
     }
+    // cards.push(result)
   }
 
   return (
@@ -27,21 +42,18 @@ function AddProjectPopup() {
               method="POST"
             >
               <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label className="block text-sm font-medium text-gray-700">
                   Project Name
                 </label>
                 <div className="mt-1">
                   <input
-                    id="email"
+                    id="text"
                     name="email"
-                    type="email"
+                    type="text"
                     autoComplete="email"
                     required
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    onChange={(event) => setTitle(event.target.value)}
+                    onChange={(event) => setName(event.target.value)}
                   />
                 </div>
               </div>
@@ -64,6 +76,60 @@ function AddProjectPopup() {
                     onChange={(event) => setDbUrl(event.target.value)}
                   />
                 </div>
+              </div>
+
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Database Authorization Key
+              </label>
+              <div className="mt-1">
+                <input
+                  id="dbAuthKey"
+                  name="dbAuthKey"
+                  type="dbAuthKey"
+                  autoComplete="dbAuthKey"
+                  required
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  onChange={(event) => setDbAuthKey(event.target.value)}
+                />
+              </div>
+
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Bucket Name
+              </label>
+              <div className="mt-1">
+                <input
+                  id="bucketName"
+                  name="bucketName"
+                  type="bucketName"
+                  autoComplete="bucketName"
+                  required
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  onChange={(event) => setBucketName(event.target.value)}
+                />
+              </div>
+
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Database Project Name
+              </label>
+              <div className="mt-1">
+                <input
+                  id="dbProjectName"
+                  name="dbProjectName"
+                  type="dbProjectName"
+                  autoComplete="dbProjectName"
+                  required
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  onChange={(event) => setDbProjectName(event.target.value)}
+                />
               </div>
 
               <div>

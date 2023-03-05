@@ -33,7 +33,7 @@ export default function HomePage() {
                   + Add Project
                 </button>
               }
-              position=""
+              position="bottom  "
             >
               <AddProjectPopup />
             </Popup>
