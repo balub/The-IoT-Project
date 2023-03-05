@@ -25,6 +25,8 @@ func SetUpRouter(r *gin.Engine) {
 	protectedRoute.POST("/model/edit", controllers.UpdateDataModel)
 
 	protectedRoute.GET("/FetchDataModel/:projectToken/:dataModel", client.FetchDataModel)
+	protectedRoute.GET("/FetchDataModel/:projectToken/:dataModel/:parameter", client.FetchDataModelParameter)
+
 	// protectedRoute.GET("/sse", client.SseHandler)
 	// protectedRoute.GET("/influx", client.FetchAll)
 
