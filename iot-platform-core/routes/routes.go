@@ -8,30 +8,31 @@ import (
 )
 
 func SetUpRouter(r *gin.Engine) {
+
 	publicRoute := r.Group("/auth")
 	protectedRoute := r.Group("/protected")
 
-	publicRoute.Use(func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(204)
-			return
-		}
-		c.Next()
-	})
+	// publicRoute.Use(func(c *gin.Context) {
+	// 	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+	// 	c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
+	// 	c.Writer.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
+	// 	if c.Request.Method == "OPTIONS" {
+	// 		c.AbortWithStatus(204)
+	// 		return
+	// 	}
+	// 	c.Next()
+	// })
 
-	protectedRoute.Use(func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(204)
-			return
-		}
-		c.Next()
-	})
+	// protectedRoute.Use(func(c *gin.Context) {
+	// 	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+	// 	c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
+	// 	c.Writer.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
+	// 	if c.Request.Method == "OPTIONS" {
+	// 		c.AbortWithStatus(204)
+	// 		return
+	// 	}
+	// 	c.Next()
+	// })
 
 	protectedRoute.Use(middlewares.JwtAuthMiddleware())
 
@@ -43,5 +44,6 @@ func SetUpRouter(r *gin.Engine) {
 	protectedRoute.POST("/device", controllers.CreateNewDevice)
 	protectedRoute.GET("/device", controllers.FetchDeviceList)
 	protectedRoute.POST("/model", controllers.CreateModel)
+	protectedRoute.GET("/model", controllers.FetchModelInfo)
 	protectedRoute.GET("/sse", client.SseHandler)
 }

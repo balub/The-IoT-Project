@@ -27,6 +27,23 @@ type dbModelInfo struct {
 	ID string `json:"projectID"`
 }
 
+type FetchListModel struct {
+	ID   string `json:"modelID"`
+	Name string `json:"name"`
+}
+
+type FetchListField struct {
+	Name     string `json:"name"`
+	Type     string `json:"type"`
+	Required bool   `json:"required"`
+}
+
+type FinalDataModel struct {
+	ID     string           `json:"modelID"`
+	Name   string           `json:"name"`
+	Fields []FetchListField `json:"fields"`
+}
+
 func CreateModel(c *gin.Context) {
 	// parseBody
 	var body ModelReqBody
@@ -69,14 +86,28 @@ func FetchModelInfo(c *gin.Context) {
 		return
 	}
 
-	var dbModels []Field
+	var models []FetchListModel
+	databases.DB.Table("models").Select("id, name").Where(fmt.Sprintf("project_id='%v'", body.ProjectID)).Scan(&models)
 
-	var models []Field
-	databases.DB.Table("devices").Select("name, type, required").Where(fmt.Sprintf("project_id='%v'", body.ProjectID)).Scan(&models)
+	var arrLength = len(models)
 
-	for _, model := range models {
-		dbModels = append(dbModels, Field{model.Name, model.Type, model.Required})
+	finalData := make([]FinalDataModel, arrLength)
+
+	for index, model := range models {
+		finalData[index].ID = model.ID
+		finalData[index].Name = model.Name
 	}
 
-	c.IndentedJSON(http.StatusOK, dbModels)
+	for _, model := range models {
+
+		var modelID = model.ID
+		var fields []FetchListField
+		databases.DB.Table("fields").Select("name, type, required").Where(fmt.Sprintf("model_id='%v'", modelID)).Scan(&fields)
+
+		for index, field := range fields {
+			finalData[index].Fields = append(finalData[index].Fields, FetchListField{field.Name, field.Type, field.Required})
+		}
+	}
+
+	c.IndentedJSON(http.StatusOK, finalData)
 }
