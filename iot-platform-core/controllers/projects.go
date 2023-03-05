@@ -21,6 +21,16 @@ type ProjectInput struct {
 	DbProjectName string `json:"dbProjectName"`
 }
 
+type ProjectFetchBody struct {
+	ID            string `json:"id"`
+	Name          string `json:"name"`
+	DbUrl         string `json:"dbUrl"`
+	DbAuthKey     string `json:"dbAuthKey"`
+	BucketName    string `json:"bucketName"`
+	DbProjectName string `json:"dbProjectName"`
+	CreatedAt     string `json:"createdAt"`
+}
+
 func CreateNewProject(c *gin.Context) {
 	// check for userID
 	userID, exists := utils.ExtractTokenID(c)
@@ -70,8 +80,8 @@ func FetchProjects(c *gin.Context) {
 	var user models.User
 	databases.DB.First(&user, fmt.Sprintf("id=%v", userID))
 
-	var projects []models.Projects
-	databases.DB.Where("user_id = ?", user.ID).Find(&projects)
+	var projects []ProjectFetchBody
+	databases.DB.Table("projects").Select("id, name, db_url, db_auth_key, bucket_name, db_project_name, created_at").Where("user_id = ?", user.ID).Scan(&projects)
 
 	c.IndentedJSON(http.StatusOK, projects)
 }

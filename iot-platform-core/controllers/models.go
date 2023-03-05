@@ -23,6 +23,11 @@ type ModelReqBody struct {
 	Fields    []Field `json:"fields"`
 }
 
+type UpdateReqBody struct {
+	ModelID string  `json:"modelID"`
+	Fields  []Field `json:"fields"`
+}
+
 type dbModelInfo struct {
 	ID string `json:"projectID"`
 }
@@ -42,6 +47,11 @@ type FinalDataModel struct {
 	ID     string           `json:"modelID"`
 	Name   string           `json:"name"`
 	Fields []FetchListField `json:"fields"`
+}
+
+type UpdateDataModelBody struct {
+	ModelID string  `json:"name"`
+	Fields  []Field `json:"fields"`
 }
 
 func CreateModel(c *gin.Context) {
@@ -110,4 +120,33 @@ func FetchModelInfo(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusOK, finalData)
+}
+
+func UpdateDataModel(c *gin.Context) {
+	var body UpdateReqBody
+
+	if err := c.BindJSON(&body); err != nil {
+		c.JSON(http.StatusPartialContent, gin.H{"message": "Error parsing body"})
+		return
+	}
+
+	var field models.Fields
+	deleteError := databases.DB.Where(fmt.Sprintf("model_id='%v'", body.ModelID)).Delete(&field).Error
+
+	if deleteError != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"Delete error": deleteError.Error()})
+		return
+	}
+
+	for _, field := range body.Fields {
+		newField := models.Fields{ModelId: string(body.ModelID), Name: field.Name, Type: field.Type, Required: field.Required}
+		errCase := databases.DB.Create(&newField).Error
+
+		if errCase != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"Insert error": errCase.Error()})
+			return
+		}
+	}
+
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "model updated"})
 }
