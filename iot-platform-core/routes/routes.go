@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"github.com/balub/The-IoT-Project/middlewares"
 	"github.com/balub/The-IoT-Project/controllers"
 	"github.com/balub/The-IoT-Project/controllers/client"
 	"github.com/gin-gonic/gin"
