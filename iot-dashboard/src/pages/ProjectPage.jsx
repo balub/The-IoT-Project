@@ -2,7 +2,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import DeviceManagement from "../components/DeviceManagement";
 import DataModel from "../components/DataModel";
-// import Api from "../components/Api";
+import Api from "../components/Api";
 import NavBar from "../components/NavBar";
 import Tabs from "../components/Tabs";
 
@@ -19,7 +19,7 @@ function ProjectPage() {
       case 2:
         return <DataModel />;
       case 3:
-        // return <Api />;
+        return <Api />;
     }
   }
 
